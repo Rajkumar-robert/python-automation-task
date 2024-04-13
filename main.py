@@ -17,7 +17,7 @@ home_login_button=driver.find_element(By.CLASS_NAME,"wcgxB")
 home_login_button.click()
 
 time.sleep(2)
-user_email=driver.find_element(By.CLASS_NAME,"ffHip")
+user_email=driver.find_element(By.NAME,"email")
 user_email.send_keys(userEmail)
 
 time.sleep(1)
@@ -35,7 +35,7 @@ search_field.send_keys(Keys.ENTER)
 time.sleep(3)
 
 
-for _ in range(60):
+for _ in range(76):
 
     driver.find_element(By.TAG_NAME,'body').send_keys(Keys.TAB)
 
