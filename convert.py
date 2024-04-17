@@ -6,24 +6,15 @@ from pymongo import MongoClient
 def excel_to_json(excel_file):
     excel_data = pd.read_excel(excel_file) 
     json_data = excel_data.to_dict(orient='records')
-    print(type(json_data))
     return json_data
 
-
 def insert_json_to_mongodb(json_data):
-    dict_data={
-        "name":"abc",
-        "age":"23"
-    }
+
     client = MongoClient("mongodb://localhost:27017/")
     db=client.userdb
     collection=db.userdata
     collection.insert_many(json_data)
 
-
-
-db_name = 'userdb'
-collection_name = 'userdata'
 
 excel_file_path = './candidates.xlsx' 
 json_data = excel_to_json(excel_file_path)
