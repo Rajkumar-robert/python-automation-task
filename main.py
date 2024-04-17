@@ -5,7 +5,10 @@ from selenium.webdriver.common.keys import Keys
 import pyautogui
 import time
 
-service = Service(executable_path="./chromedriver-win64/chromedriver.exe")
+win_driver_path="chromedriver-win64/chromedriver.exe"
+linux_driver_path="chromedriver-linux64/chromedriver"
+
+service = Service(executable_path=linux_driver_path)
 driver = webdriver.Chrome(service=service)
 userEmail = "rdjrob429+unsplash@gmail.com"
 password = "test@123"
