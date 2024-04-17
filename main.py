@@ -1,20 +1,25 @@
+import os
+import pyautogui
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import pyautogui
-import time
+from dotenv import load_dotenv,dotenv_values
+
+load_dotenv()
+
 
 win_driver_path="chromedriver-win64/chromedriver.exe"
 linux_driver_path="chromedriver-linux64/chromedriver"
 
-service = Service(executable_path=linux_driver_path)
+service = Service(executable_path=win_driver_path)
 driver = webdriver.Chrome(service=service)
-userEmail = "rdjrob429+unsplash@gmail.com"
-password = "test@123"
+userEmail = os.getenv("USER_EMAIL")
+password = os.getenv("PASSWORD")
 search_value="lambo"
 
-driver.get("https://unsplash.com")
+driver.get(os.getenv("SITE_URL"))
 
 home_login_button=driver.find_element(By.CLASS_NAME,"wcgxB")
 home_login_button.click()
