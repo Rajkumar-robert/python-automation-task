@@ -1,23 +1,24 @@
 import subprocess
+import scrapper
+import report_insert
 
-def run_python_script(script_path):
+def webScrapping():
     try:
-        subprocess.run(["python", script_path], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error occurred while running {script_path}: {e}")
+        scrapper.main()
+        print("Web scraping completed")
+    except Exception as e:
+        print("An error occurred during web scraping:", e)
+
+def excel_to_database():
+    try:
+        report_insert.main()
+        print("Excel to database operation completed")
+    except Exception as e:
+        print("An error occurred during excel to database operation:", e)
 
 def main():
-    # List of Python script paths to execute
-    python_scripts = [
-        "scrapper_main.py",
-        "convert_main.py"
-    ]
-
-    # Execute each Python script one after another
-    for script in python_scripts:
-        print(f"Executing {script}...")
-        run_python_script(script)
-        print(f"Execution of {script} completed.\n")
-
+    webScrapping()
+    excel_to_database()
+    
 if __name__ == "__main__":
     main()
