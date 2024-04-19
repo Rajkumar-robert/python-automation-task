@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
         
-    # CONVERTING EXCEL TO DICTIONARY
+# CONVERTING EXCEL TO DICTIONARY
 def excel_to_json(excel_file):
     # Read Excel file
     excel_data = pd.read_excel(excel_file)
@@ -21,41 +21,41 @@ def excel_to_json(excel_file):
 def insert_json_to_mongodb(dict_data):
     client = MongoClient(os.getenv("MONGODB_URL"))
     db = client.userdb
-    collection = db.userData
+    collection = db.newUserData
 
-
-    i=0
     for doc in dict_data:
-        # Extract tag values
-        i+=1
-        
-        tags = [str(doc[f'tag{i}']) for i in range(1, 6) if doc.get(f'tag{i}') is not None]
-        
-        if(tags[0]!=""):
+    # Extract tag values
+        tags = [str(doc[f'tag{i}']) for i in range(1, 4) if doc.get(f'tag{i}') is not None]
 
-            # Assigning tag values to variables
+        if tags[0] != "":
+        # Assigning tag values to variables
             tag1 = tags[0] if tags[0] else ''
             tag2_values = tags[1].split(';') if len(tags) > 1 else []
             tag3_values = tags[2].split(';') if len(tags) > 2 else []
 
-        
             query = {
-                'learner_id': tag1,
-                'program_id': tag2_values[0],
-                'module_id': tag2_values[1],
-                'activity_id': tag2_values[2],
-                'super_admin': tag3_values[0],
-                'organization_id': tag3_values[1],
+                'learner_id': ObjectId(tag1),
+                'program_id': ObjectId(tag2_values[0]),
+                'module_id': ObjectId(tag2_values[1]),
+                'activity_id': ObjectId(tag2_values[2]),
+                'super_admin': ObjectId(tag3_values[0]),
+                'organization_id': ObjectId(tag3_values[1]),
             }
-            print(query)
-            update_record={"$set":{"report_data":doc}}
-        
+            update_record = {"$set": {"report_data": doc}}
             # Check if a document with matching tags exists
-            existing_doc = collection.find_one({},query)
-            print(existing_doc)
+            existing_doc = collection.find_one(query)
+
             if existing_doc:
-                # collection.update_one(,update_record)
-                pass
+                if 'record_data' in existing_doc and existing_doc['record_data.UniqueId'] == doc['UniqueId']:
+                    print("same unique id is existing")
+                    continue  # Skip if the existing document has the same UniqueId
+
+                object_id = ObjectId(existing_doc['_id'])
+                print(object_id)
+                collection.find_one_and_update({'_id': object_id}, update_record)
+            else:
+                print("No document exists with similar id")
+
 
 excel_file_path = './candidates.xlsx'
 dict_data = excel_to_json(excel_file_path)
