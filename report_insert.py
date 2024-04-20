@@ -40,13 +40,14 @@ def insert_json_to_mongodb(dict_data):
     db = client[db_name]
     collection = db[collection_name]
 
-    for doc in dict_data:
+    for report in dict_data:
     # Extract tag values
-        tags = [str(doc[f'tag{i}']) for i in range(1, 4) if doc.get(f'tag{i}') is not None]
+        tags = [str(report[f'tag{i}']) for i in range(1, 4) if report.get(f'tag{i}') is not None]
         # Assigning tag values to id
         tag1 = tags[0] if tags[0] else ''
         tag2_values = tags[1].split(';') if len(tags) > 1 else []
         tag3_values = tags[2].split(';') if len(tags) > 2 else []
+        
 
         query = {
             'learner_id': ObjectId(tag1),
@@ -56,30 +57,31 @@ def insert_json_to_mongodb(dict_data):
             'super_admin': ObjectId(tag3_values[0]),
             'organization_id': ObjectId(tag3_values[1]),
         }
-        update_record = {"$set": {"report_data": doc}}
+        update_record = {"$set": {"report_data": report}}
         
         # Check if a document with matching tags exists
-        existing_doc = collection.find_one(query)
-        if existing_doc:
-            report_data=existing_doc['report_data']
-            #checking uniqueId 
-            if 'UniqueId' in report_data and report_data['UniqueId'] == doc['UniqueId']:
-                    print("same uniqueId is detected")
-                    continue  # Skip if the existing document has the same UniqueId
-            
-            object_id = ObjectId(existing_doc['_id'])
-            if object_id:
-                #inserting report_data into document
-                collection.find_one_and_update({'_id': object_id}, update_record)
-                print("Inserted document successfully!!")
+        existing_doc = collection.find(query)
+        
+        for doc in existing_doc:
+            if doc:
+                report_data=doc['report_data']
+                #checking uniqueId 
+                if 'UniqueId' in report_data and report_data['UniqueId'] == report['UniqueId']:
+                        print("same uniqueId is detected")
+                        continue  # Skip if the existing document has the same UniqueId
+                else:
+                    #inserting report_data into document
+                    object_id = ObjectId(doc['_id'])
+                    collection.find_one_and_update({'_id': object_id}, update_record)
+                    print("Inserted document successfully!!")
                 
-        else:
-            print("No document exists with similar id")
+            else:
+                print("No document exists with similar id")
                 
 def delete_file(file_path):
     try:
-       # os.remove(file_path)
-       pass
+       os.remove(file_path)
+    #    pass
     except PermissionError:
         print("File is still being used by another process. Trying again in 3 seconds...")
         time.sleep(3)

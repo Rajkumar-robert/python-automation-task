@@ -1,4 +1,3 @@
-import subprocess
 import scrapper
 import report_insert
 
@@ -22,3 +21,7 @@ def main():
     
 if __name__ == "__main__":
     main()
+
+
+
+

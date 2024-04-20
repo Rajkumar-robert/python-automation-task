@@ -36,6 +36,7 @@ def main():
 
     #testing url to get records
     test_url ="&completedFrom=2024-04-13T19:14:54&completedTo=2024-04-18T19:14:54"
+    completion_expired_url="4,"
     driver.get(os.getenv("SITE_URL"))
 
 
@@ -61,12 +62,15 @@ def main():
         driver.switch_to.window(driver.window_handles[-1])
 
         #changing new url
-        time.sleep(5)
+        time.sleep(20)
         pyautogui.press('f6')
-        pyautogui.press('end')
-        pyautogui.typewrite(test_url)
-        pyautogui.press('enter')
+        pyautogui.press('home')
         time.sleep(5)
+        pyautogui.press('right',presses=130)
+        pyautogui.typewrite(completion_expired_url)
+        time.sleep(5)
+        pyautogui.press('enter')
+        time.sleep(25)
 
         download_options_button= WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "(//div[@class='align-center-vertical app-avatar ng-star-inserted'])[4]")))
         download_options_button.click()
