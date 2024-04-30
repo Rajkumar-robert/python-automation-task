@@ -62,26 +62,44 @@ def insert_json_to_mongodb(dict_data):
         # Check if a document with matching tags exists
         existing_doc = collection.find(query)
         
+        i=0
+        print(report['Participant status'])
         for doc in existing_doc:
+           
+            i+=1
             if doc:
                 report_data=doc['report_data']
                 #checking uniqueId 
-                if 'UniqueId' in report_data and report_data['UniqueId'] == report['UniqueId']:
-                        print("same uniqueId is detected")
+                if 'UniqueId' in report_data:
+                    print("uniqueid is present")
+                    if report_data['UniqueId'] == report['UniqueId']:
+                        print("same uniqueId is detected,skipping")
                         continue  # Skip if the existing document has the same UniqueId
+                    else:
+                        #inserting report_data into document
+                        print("uniqueid not matching,pushing into report")
+                        
+                        newReport = []
+                        newReport.append(doc['report_data'])
+                        newReport.append(report)
+                        print(83,newReport)
+                        object_id = ObjectId(doc['_id'])
+                        print(object_id)
+                        collection.find_one_and_update({'_id': object_id}, {"$set": {"report_data": newReport}})
+                        print("Appended report to existing document successfully!!")
+                        break
                 else:
-                    #inserting report_data into document
-                    object_id = ObjectId(doc['_id'])
-                    collection.find_one_and_update({'_id': object_id}, update_record)
-                    print("Inserted document successfully!!")
-                
+                    #updating doc
+                    print("no uniqueid present")
+                    collection.find_one_and_update(doc, update_record)
+                    break
             else:
                 print("No document exists with similar id")
                 
 def delete_file(file_path):
     try:
-       os.remove(file_path)
-    #    pass
+      #  os.remove(file_path)
+       pass
     except PermissionError:
         print("File is still being used by another process. Trying again in 3 seconds...")
         time.sleep(3)
