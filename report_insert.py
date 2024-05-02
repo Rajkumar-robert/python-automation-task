@@ -57,7 +57,7 @@ def insert_json_to_mongodb(dict_data):
             'super_admin': ObjectId(tag3_values[0]),
             'organization_id': ObjectId(tag3_values[1]),
         }
-        update_record = {"$set": {"report_data": report}}
+        update_record = {"$set": {"report_data": [report]}}
         
         # Check if a document with matching tags exists
         existing_doc = collection.find(query)
@@ -91,7 +91,8 @@ def insert_json_to_mongodb(dict_data):
                 else:
                     #updating doc
                     print("no uniqueid present")
-                    collection.find_one_and_update(doc, update_record)
+                    object_id = ObjectId(doc['_id'])
+                    collection.find_one_and_update({'_id': object_id}, update_record)
                     break
             else:
                 print("No document exists with similar id")
